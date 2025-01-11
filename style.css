@@ -1,0 +1,9 @@
+/*Esse é o fundo da página, gradiente de cores usado do outro projeto anotei: https://github.com/JordanLippert/anotei */
+body {
+    min-height: 100vh;
+    padding: 2rem;
+    color: #27272a;
+    background: linear-gradient(to top, #7f1d1d, #dc2626, #f59e0b);
+    font-family: 'Gabriola';
+    margin: 0;
+}
