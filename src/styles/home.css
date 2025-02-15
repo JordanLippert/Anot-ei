@@ -1,0 +1,141 @@
+/*Esse é o fundo da página, gradiente de cores usado do outro projeto anotei: https://github.com/JordanLippert/anotei */
+body {
+    min-height: 100vh;
+    padding: 2rem;
+    color: #27272a;
+    box-sizing: border-box;
+    background: #fff;
+    font-family: 'Righteous';
+    margin: 0;
+}
+
+header {
+    border-radius: 5px;
+}
+
+section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    align-items: center; 
+    border-radius: 8px;
+}
+
+img { 
+    width: 250px; 
+    height: auto;
+    justify-self: start;
+}
+
+.button-anotacao {
+    background-color: #f59e0b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    justify-self: center;
+}
+
+.button-anotacao:hover {
+    background-color: #d97706;
+}
+
+.nav-perfil {
+    background-color: #f59e0b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    justify-self: end;
+}
+
+.area-calendario {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Estilo para o contêiner do calendário */
+#calendar {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border: none;
+}
+
+/* Estilo para os dias do calendário */
+.fc-daygrid-day {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+}
+
+/* Estilo para os dias do calendário ao passar o mouse */
+.fc-daygrid-day:hover {
+    background-color: #e9e9e9;
+}
+
+/* Estilo para os eventos do calendário */
+.fc-event {
+    background-color: #007bff;
+    color: #f59e0b;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 5px;
+}
+
+/* Aumenta o tamanho dos números dos dias */
+.fc-daygrid-day-number {
+    font-size: 1.35em; 
+    color: #f59e0b;
+    text-decoration: none; 
+}
+
+/* Aumenta o tamanho das escritas dos dias */
+.fc-col-header-cell-cushion {
+    font-size: 1.40em; 
+    color: #f59e0b;
+    text-decoration: none; 
+}
+
+.fc-event.feriado {
+    background-color: #ff6347; 
+    color: #fff; 
+    font-weight: bold; 
+}
+
+/* Altera a cor de fundo e a cor da fonte dos botões do FullCalendar */
+.fc-button {
+    background-color: #f59e0b !important; /* Define a cor de fundo */
+    color: #fff !important; /* Define a cor do texto */
+    border: none !important; /* Remove a borda */
+    border-radius: 5px !important; /* Arredonda as bordas */
+    font-weight: bold !important; /* Deixa o texto em negrito */
+    margin: 3px !important; /* Adiciona um leve espaçamento */
+}
+
+/* Muda a cor do botão quando o mouse passa por cima */
+.fc-button:hover {
+    background-color: #d97706 !important; /* Tom um pouco mais escuro */
+}
+
+/* Muda a cor do botão quando está ativo/clicado */
+.fc-button:active,
+.fc-button.fc-button-active {
+    background-color: #b45309 !important;
+    color: #fff !important;
+}
+
+/* Altera a cor dos botões de navegação (Próximo/Anterior) */
+.fc-prev-button,
+.fc-next-button {
+    background-color: #f59e0b !important;
+    color: #fff !important;
+}
+
+/* Muda a cor do botão de hoje */
+.fc-today-button {
+    background-color: #f59e0b !important;
+    color: #fff !important;
+}
