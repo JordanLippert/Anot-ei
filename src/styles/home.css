@@ -20,10 +20,104 @@ section {
     border-radius: 8px;
 }
 
-img { 
-    width: 250px; 
-    height: auto;
+img {  
+    height: 48px;
     justify-self: start;
+}
+
+.ant-pen {
+    width: auto;
+    height: 25px;
+    margin-right: 12px;
+}
+
+.modal-opened {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9;
+    opacity: 0;
+    margin-top: -40px;
+}
+
+.modal {
+    position: fixed;
+    width: 500px;
+    margin-left: calc(50% - 250px);
+    margin-top: 200px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    z-index: 99;
+    box-shadow: 7px 6px 30px 0px rgba(0, 0, 0, 0.75);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.modal-close {
+    cursor: pointer;
+    color: #ff6347;
+    font-weight: 400;
+    font-size: 17px;
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.modal-body label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin: 5px 0;
+}
+
+.modal-body input {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #CCC;
+    border-radius: 6px;
+    margin-bottom: 5px;
+    outline: none;
+}
+
+.modal-body input[type=color] {
+    width: 50px;
+    height: 50px;
+}
+
+.modal-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.modal-footer button {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    background-color: #f59e0b;
+    border: 1px solid #f59e0b;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.modal-footer button:hover {
+    background-color: #d97706;
+    color: #fff;
+}
+
+.hidden {
+    display: none;
 }
 
 .button-anotacao {
@@ -54,12 +148,14 @@ img {
 }
 
 .area-calendario {
-    max-width: 1100px;
-    margin: 0 auto;
+    margin: 40px 10px;
+    padding: 0;
 }
 
 /* Estilo para o contêiner do calendário */
 #calendar {
+    max-width: 1100px;
+    margin: 0 auto;
     border: 1px solid #ddd;
     padding: 10px;
     border: none;
