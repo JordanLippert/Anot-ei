@@ -32,25 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
     editable: true,
     dayMaxEvents: true,
     dateClick: function (info) {
-      let title = prompt("Digite o título do evento:");
-      if (title) {
-        fetch('http://localhost:3000/events', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            title: title,
-            start: info.dateStr,
-            allDay: true
-          })
-        })
-        .then(response => response.json())
-        .then(event => {
-          calendar.addEvent(event); // Adiciona o evento no calendário sem recarregar
-        })
-        .catch(error => console.error('Erro ao adicionar evento:', error));
-      }
+      abrirModal(info);
     },
     eventClick: function (info) {
       if (confirm("Deseja realmente deletar o evento?")) {
@@ -104,4 +86,39 @@ document.addEventListener("DOMContentLoaded", function () {
     events: "http://localhost:3000/events"
   });
   calendar.render();
+
+  const modal = document.querySelector('.modal-opened');
+
+  const abrirModal = (info) => {
+    if(modal.classList.contains('hidden')) {
+      modal.classList.remove('hidden');
+
+      modal.style.transition = 'opacity 300ms';
+
+      setTimeout(() => modal.style.opacity = 1, 100);
+    }
+  }
+
+  document.querySelector('.modal-close').addEventListener('click', () => fecharModal());
+  
+  modal.addEventListener('click', function(event) {
+    if(event.target === this) {
+      fecharModal();
+    }
+  });
+
+  document.addEventListener('keydown', function(event) {
+    if(event.key === 'Escape') {
+      fecharModal();
+    }
+  });
+
+  const fecharModal = () => {
+    if(!modal.classList.contains('hidden')) {
+      modal.style.transition = 'opacity 300ms';
+
+      setTimeout(() => modal.style.opacity = 0, 100);
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+  }
 });
