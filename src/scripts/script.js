@@ -35,53 +35,10 @@ document.addEventListener("DOMContentLoaded", function () {
       abrirModal(info);
     },
     eventClick: function (info) {
-      if (confirm("Deseja realmente deletar o evento?")) {
-        fetch(`http://localhost:3000/events/${info.event.id}`, {
-          method: 'DELETE'
-        })
-        .then(() => {
-          info.event.remove(); // Remove o evento do calendário ao clicar nele
-        })
-        .catch(error => console.error('Erro ao deletar evento:', error));
-      }
+      abrirModalEditar(info);
     },
     eventDrop: function (info) {
-      fetch(`http://localhost:3000/events/${info.event.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: info.event.title,
-          start: info.event.start.toISOString(),
-          end: info.event.end ? info.event.end.toISOString() : null,
-          allDay: info.event.allDay
-        })
-      })
-      .then(response => response.json())
-      .then(event => {
-        console.log(event);
-      })
-      .catch(error => console.error('Erro ao atualizar evento:', error));
-    },
-    eventResize: function (info) {
-      fetch(`http://localhost:3000/events/${info.event.id}`, {
-          method: 'PUT',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-              title: info.event.title,
-              start: info.event.start.toISOString(),
-              end: info.event.end ? info.event.end.toISOString() : null,
-              allDay: info.event.allDay
-          })
-      })
-      .then(response => response.json())
-      .then(updatedEvent => {
-          console.log("Evento atualizado com sucesso:", updatedEvent);
-      })
-      .catch(error => console.error("Erro ao redimensionar evento:", error));
+      moverEvento(info);
     },
     events: "http://localhost:3000/events"
   });
@@ -96,6 +53,64 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.style.transition = 'opacity 300ms';
 
       setTimeout(() => modal.style.opacity = 1, 100);
+    }
+
+    document.querySelector('#start').value = info.dateStr + "08:00";
+    document.querySelector('#end').value = info.dateStr + "18:00";
+  }
+
+  const abrirModalEditar = (info) => {
+    if(modal.classList.contains('hidden')) {
+      modal.classList.remove('hidden');
+
+      modal.style.transition = 'opacity 300ms';
+
+      setTimeout(() => modal.style.opacity = 1, 100);
+    }
+
+    let data_start =[
+      info.event.start.toLocaleString().replace(',', '').split(' ')[0].split('/').reverse().join('-'),
+      info.event.start.toLocaleString().replace(',', '').split(' ')[1]
+    ].join(' ');
+
+    let data_end =[
+      info.event.end.toLocaleString().replace(',', '').split(' ')[0].split('/').reverse().join('-'),
+      info.event.end.toLocaleString().replace(',', '').split(' ')[1]
+    ].join(' ');
+
+    document.querySelector('.modal-title h3').innerHTML = 'Editar Evento';
+    document.querySelector('#id').value = info.event.id;
+    document.querySelector('#title').value = info.event.title;
+    document.querySelector('#color').value = info.event.backgroundColor;
+    document.querySelector('#start').value = info.event.data_start;
+    document.querySelector('#end').value = info.event.data_end;
+    document.querySelector('.btn-delete').classList.remove('hidden');
+  
+  }
+
+  const moverEvento = (info) => {
+    let id = info.event.id;
+    let title = info.event.title;
+    let start = info.event.startStr;
+    let end = info.event.endStr ? info.event.endStr : null;
+    let color = info.event.backgroundColor;
+
+    let data = { id, title, color , start, end };
+
+    let urlEncodedData = Object.keys(data)
+      .map(key =>encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+
+    var ajax = new XMLHttpRequest();
+    ajax.open('POST', 'http://localhost:3000/events', true);
+    ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    ajax.send(urlEncodedData);
+
+    ajax.onreadystatechange = function() {
+      if(ajax.readyState === 4 && ajax.status === 200) {
+        var data = ajax.responseText;
+        // console.log(data);
+      }
     }
   }
 
@@ -121,4 +136,37 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => modal.classList.add('hidden'), 300);
     }
   }
+
+  let form_add_event = document.querySelector('#form-add-event');
+
+  form_add_event.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let title = document.querySelector('#title').value;
+    let start = document.querySelector('#start').value;
+
+    if(title.value == '') {
+      title.style.borderColor = 'red';
+      title.focus();
+      return false;
+    }
+
+    if(start.value == '') {
+      start.style.borderColor = 'red';
+      start.focus();
+      return false;
+    }
+
+    this.submit();
+  });
+
+  document.querySelector('.btn-delete').addEventListener('click', function() {
+    if(confirm('Tem certeza que deseja excluir este evento? E ação esta ação nao pode ser desfeita.')) {
+      document.querySelector('#action').value = 'delete';
+      form_add_event.submit();
+      return true;
+    }
+
+    return false;
+  });
 });
