@@ -39,16 +39,16 @@
             <form action="action-event" method="post" id="form-add-event">
                 <div class="modal-body">
                     <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="action" value="">
+                    <input type="hidden" name="action" id="action" value="">
 
                     <label for="title">Nome do Evento</label>
-                    <input type="text" name="title" id="title">
+                    <input type="text" name="title" id="title" required>
 
                     <label for="color">Selecione uma cor</label>
-                    <input type="color" name="color" id="color">
+                    <input type="color" name="color" id="color" required>
                     
                     <label for="start">Início do Evento</label>
-                    <input type="datetime-local" name="start" id="start">
+                    <input type="datetime-local" name="start" id="start" required>
                     
                     <label for="end">Término do Evento</label>
                     <input type="datetime-local" name="end" id="end">
@@ -67,6 +67,11 @@
     
     <!--Área do calendário -->
     <div class="area-calendario">
+        <div class="header-area-calendario">
+            <div class="msg">
+                
+            </div>
+        </div>
       <div id='calendar'></div>
     </div>
 
