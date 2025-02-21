@@ -91,4 +91,38 @@ router.post("/reset-password", async (req, res) => {
     res.json({ message: "Senha redefinida com sucesso!" });
 });
 
+// Atualizar perfil do usuário
+router.put("/update-profile", async (req, res) => {
+    const { name, email, password } = req.body;
+    const userId = req.user.id; // Supondo que você tenha middleware de autenticação que adiciona o ID do usuário ao req
+
+    try {
+        const data = {};
+        if (name) data.name = name;
+        if (email) data.email = email;
+        if (password) data.password = await bcrypt.hash(password, 10);
+
+        const user = await prisma.user.update({
+            where: { id: userId },
+            data
+        });
+
+        res.json({ message: "Perfil atualizado com sucesso!" });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao atualizar perfil" });
+    }
+});
+
+// Deletar conta do usuário
+router.delete("/delete-account", async (req, res) => {
+    const userId = req.user.id; // Supondo que você tenha middleware de autenticação que adiciona o ID do usuário ao req
+
+    try {
+        await prisma.user.delete({ where: { id: userId } });
+        res.json({ message: "Conta deletada com sucesso!" });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao deletar conta" });
+    }
+});
+
 module.exports = router;
