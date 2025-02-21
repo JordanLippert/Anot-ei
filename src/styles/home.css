@@ -116,8 +116,40 @@ img {
     color: #fff;
 }
 
+.btn-delete {
+    background-color: #ff6347 !important;
+    border: 1px solid #ff6347 !important;
+}
+
+.btn-delete:hover {
+    background-color: #dd7a69 !important;
+    border: 1px solid #dd7a69 !important;
+}
+
 .hidden {
     display: none;
+}
+
+.alert-danger {
+    background-color: #ff6347;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.alert-sucess {
+    background-color: #f59e0b;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px 0;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .button-anotacao {
@@ -153,7 +185,8 @@ img {
 }
 
 /* Estilo para o contêiner do calendário */
-#calendar {
+#calendar,
+.header-area-calendario {
     max-width: 1100px;
     margin: 0 auto;
     border: 1px solid #ddd;
