@@ -45,8 +45,8 @@ document.addEventListener("DOMContentLoaded", function () {
   calendar.render();
 
   const modal = document.querySelector('.modal-opened');
-  const modalAnotacao = document.querySelector('.modal-anotacao-opened');
-  const buttonAnotacao = document.querySelector('.button-anotacao');
+  // const modalAnotacao = document.querySelector('.modal-anotacao-opened');
+  // const buttonAnotacao = document.querySelector('.button-anotacao');
 
   buttonAnotacao.addEventListener('click', () => {
     if (modalAnotacao.classList.contains('hidden')) {
