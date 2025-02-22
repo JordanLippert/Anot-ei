@@ -45,6 +45,16 @@ document.addEventListener("DOMContentLoaded", function () {
   calendar.render();
 
   const modal = document.querySelector('.modal-opened');
+  const modalAnotacao = document.querySelector('.modal-anotacao-opened');
+  const buttonAnotacao = document.querySelector('.button-anotacao');
+
+  buttonAnotacao.addEventListener('click', () => {
+    if (modalAnotacao.classList.contains('hidden')) {
+      modalAnotacao.classList.remove('hidden');
+      modalAnotacao.style.transition = 'opacity 300ms';
+      setTimeout(() => modalAnotacao.style.opacity = 1, 100);
+    }
+  });
 
   const abrirModal = (info) => {
     if(modal.classList.contains('hidden')) {
