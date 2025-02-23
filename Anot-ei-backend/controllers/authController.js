@@ -2,7 +2,6 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
-const nodemailer = require("nodemailer");
 const { body, validationResult } = require("express-validator");
 
 const prisma = new PrismaClient();
@@ -10,7 +9,7 @@ const router = express.Router();
 
 const JWT_SECRET = "seu_segredo";
 
-//cadastro do usuário
+// Cadastro do usuário
 router.post("/register", [
     body("name").notEmpty(),
     body("email").isEmail(),
@@ -26,13 +25,15 @@ router.post("/register", [
         const user = await prisma.user.create({
             data: { name, email, password: hashedPassword },
         });
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
+        res.cookie('token', token, { httpOnly: true });
         res.json({ message: "Usuário registrado com sucesso!" });
     } catch (error) {
         res.status(500).json({ error: "Erro ao cadastrar usuário" });
     }
 });
 
-//login
+// Login
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
@@ -43,6 +44,7 @@ router.post("/login", async (req, res) => {
     if (!isMatch) return res.status(401).json({ error: "Senha incorreta" });
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
+    res.cookie('token', token, { httpOnly: true });
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
 });
 
