@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
   var calendarEl = document.getElementById("calendar");
   //Configuração do calendário
   var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -44,25 +50,63 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   calendar.render();
 
-  const modal = document.querySelector('.modal-opened');
-  // const modalAnotacao = document.querySelector('.modal-anotacao-opened');
-  // const buttonAnotacao = document.querySelector('.button-anotacao');
+  const modalEvent = document.getElementById('modal-event');
+  const modalNote = document.getElementById('modal-note');
 
-  //buttonAnotacao.addEventListener('click', () => {
-  //  if (modalAnotacao.classList.contains('hidden')) {
-  //    modalAnotacao.classList.remove('hidden');
-  //    modalAnotacao.style.transition = 'opacity 300ms';
-  //    setTimeout(() => modalAnotacao.style.opacity = 1, 100);
- //   }
-  //});
+  document.getElementById('open-modal-note').addEventListener('click', function() {
+    abrirModalAnotacao();
+  });
+  
+  document.querySelector('.modal-close').addEventListener('click', function() {
+    fecharModalAnotacao();
+  });
+
+  const abrirModalAnotacao = () => {
+    if(modalNote.classList.contains('hidden')) {
+      modalNote.classList.remove('hidden');
+
+      modalNote.style.transition = 'opacity 300ms';
+
+      setTimeout(() => modalNote.style.opacity = 1, 100);
+    }
+  }
+
+  const fecharModalAnotacao = () => {
+    if(!modalNote.classList.contains('hidden')) {
+      modalNote.style.transition = 'opacity 300ms';
+
+      setTimeout(() => modalNote.style.opacity = 0, 100);
+      setTimeout(() => modalNote.classList.add('hidden'), 300);
+    }
+  }
 
   const abrirModal = (info) => {
-    if(modal.classList.contains('hidden')) {
-      modal.classList.remove('hidden');
+    if(modalEvent.classList.contains('hidden')) {
+      modalEvent.classList.remove('hidden');
 
-      modal.style.transition = 'opacity 300ms';
+      modalEvent.style.transition = 'opacity 300ms';
 
-      setTimeout(() => modal.style.opacity = 1, 100);
+      setTimeout(() => modalEvent.style.opacity = 1, 100);
+    }
+
+    let title = prompt("Digite o título do evento:");
+    if (title) {
+      fetch('http://localhost:3000/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: title,
+          start: info.dateStr,
+          allDay: true
+        })
+      })
+      .then(response => response.json())
+      .then(event => {
+        calendar.addEvent(event); // Adiciona o evento no calendário sem recarregar
+      })
+      .catch(error => console.error('Erro ao adicionar evento:', error));
     }
 
     document.querySelector('#start').value = info.dateStr + "08:00";
@@ -70,12 +114,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   const abrirModalEditar = (info) => {
-    if(modal.classList.contains('hidden')) {
-      modal.classList.remove('hidden');
+    if(modalEvent.classList.contains('hidden')) {
+      modalEvent.classList.remove('hidden');
 
-      modal.style.transition = 'opacity 300ms';
+      modalEvent.style.transition = 'opacity 300ms';
 
-      setTimeout(() => modal.style.opacity = 1, 100);
+      setTimeout(() => modalEvent.style.opacity = 1, 100);
     }
 
     let data_start =[
@@ -91,42 +135,49 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.modal-title h3').innerHTML = 'Editar Evento';
     document.querySelector('#id').value = info.event.id;
     document.querySelector('#title').value = info.event.title;
-    document.querySelector('#color').value = info.event.backgroundColor;
+    document.querySelector('#color').value = info.event.backgroundColor; 
     document.querySelector('#start').value = info.event.data_start;
     document.querySelector('#end').value = info.event.data_end;
     document.querySelector('.btn-delete').classList.remove('hidden');
-  
+
+    if (confirm("Deseja realmente deletar o evento?")) {
+      fetch(`http://localhost:3000/events/${info.event.id}`, {
+        method: 'DELETE'
+      })
+      .then(() => {
+        info.event.remove(); // Remove o evento do calendário ao clicar nele
+      })
+      .catch(error => console.error('Erro ao deletar evento:', error));
+    }
   }
 
   const moverEvento = (info) => {
     let id = info.event.id;
     let title = info.event.title;
-    let start = info.event.startStr;
-    let end = info.event.endStr ? info.event.endStr : null;
+    let start = info.event.start.toISOString();
+    let end = info.event.end ? info.event.end.toISOString() : null;
+    let allDay = info.event.allDay;
     let color = info.event.backgroundColor;
 
-    let data = { id, title, color , start, end };
+    let data = { id, title, color, start, end, allDay };
 
-    let urlEncodedData = Object.keys(data)
-      .map(key =>encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
-
-    var ajax = new XMLHttpRequest();
-    ajax.open('POST', 'http://localhost:3000/events', true);
-    ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    ajax.send(urlEncodedData);
-
-    ajax.onreadystatechange = function() {
-      if(ajax.readyState === 4 && ajax.status === 200) {
-        var data = ajax.responseText;
-        // console.log(data);
-      }
-    }
+    fetch(`http://localhost:3000/events/${info.event.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(event => {
+      console.log(event);
+    })
+    .catch(error => console.error('Erro ao atualizar evento:', error));
   }
 
   document.querySelector('.modal-close').addEventListener('click', () => fecharModal());
   
-  modal.addEventListener('click', function(event) {
+  modalEvent.addEventListener('click', function(event) {
     if(event.target === this) {
       fecharModal();
     }
@@ -139,11 +190,11 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const fecharModal = () => {
-    if(!modal.classList.contains('hidden')) {
-      modal.style.transition = 'opacity 300ms';
+    if(!modalEvent.classList.contains('hidden')) {
+      modalEvent.style.transition = 'opacity 300ms';
 
-      setTimeout(() => modal.style.opacity = 0, 100);
-      setTimeout(() => modal.classList.add('hidden'), 300);
+      setTimeout(() => modalEvent.style.opacity = 0, 100);
+      setTimeout(() => modalEvent.classList.add('hidden'), 300);
     }
   }
 
@@ -154,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let title = document.querySelector('#title').value;
     let start = document.querySelector('#start').value;
+    let color = document.querySelector('#color').value; 
 
     if(title.value == '') {
       title.style.borderColor = 'red';
@@ -178,5 +230,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     return false;
+  });
+
+  let form_add_note = document.querySelector('#form-add-note');
+
+  form_add_note.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    let title = document.querySelector('#note-title').value;
+    let content = document.querySelector('#note-content').value;
+
+    if(title == '') {
+      title.style.borderColor = 'red';
+      title.focus();
+      return false;
+    }
+
+    if(content == '') {
+      content.style.borderColor = 'red';
+      content.focus();
+      return false;
+    }
+
+    let data = { title, content };
+
+    let urlEncodedData = Object.keys(data)
+      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+      .join('&');
+
+    var ajax = new XMLHttpRequest();
+    ajax.open('POST', 'http://localhost:3000/api/annotations', true);
+    ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    ajax.send(urlEncodedData);
+
+    ajax.onreadystatechange = function() {
+      if(ajax.readyState === 4 && ajax.status === 200) {
+        var data = ajax.responseText;
+        // console.log(data);
+        fecharModalAnotacao();
+      }
+    }
   });
 });
