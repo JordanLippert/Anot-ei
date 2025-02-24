@@ -26,6 +26,8 @@ router.get("/annotations", authMiddleware, async (req, res) => {
 
 // Atualizar anotação
 router.put("/annotations/:id", authMiddleware, async (req, res) => {
+  // Adicionar verificação se o usuário é o dono da anotação
+  
   const { id } = req.params;
   const { title, content } = req.body;
   try {
@@ -41,6 +43,8 @@ router.put("/annotations/:id", authMiddleware, async (req, res) => {
 
 // Deletar anotação
 router.delete("/annotations/:id", authMiddleware, async (req, res) => {
+  // Adicionar verificação se o usuário é o dono da anotação
+
   const { id } = req.params;
   try {
     await prisma.annotation.delete({ where: { id: parseInt(id) } });

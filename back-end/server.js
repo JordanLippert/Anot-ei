@@ -11,11 +11,15 @@ app.use(cors());
 app.use(express.json());
 
 // Usa o controller para rotas de autenticação
-app.use('/auth', authController);
+app.use(authController);
 
 // Usa o controller para rotas de anotações
-app.use('/api', annotationController);
+app.use(annotationController);
 
+// Separar as rotas de evento em um controller diferente
+// app.use(eventController);
+
+// -----------------------------------------------------------------------------------------------------
 // Criar evento
 app.post("/events", authMiddleware, async (req, res) => {
   const { title, start, end, allDay, color } = req.body; 
@@ -63,3 +67,5 @@ app.delete("/events/:id", authMiddleware, async (req, res) => {
 
 // Iniciar servidor
 app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
+
+// -----------------------------------------------------------------------------------------------------
