@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+  const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
   if (!token) {
     window.location.href = 'login.html';
     return;
@@ -47,7 +47,10 @@ document.addEventListener("DOMContentLoaded", function () {
     dateClick: abrirModal,
     eventClick: abrirModalEditar,
     eventDrop: moverEvento,
-    events: "http://localhost:3000/events"
+    events: "http://localhost:3000/events",
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
   });
   
   calendar.render();
@@ -98,62 +101,50 @@ document.addEventListener("DOMContentLoaded", function () {
   formAddEvent.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const title = document.querySelector('#title');
-    const start = document.querySelector('#start');
+    const title = document.querySelector('#title').value;
+    const start = document.querySelector('#start').value;
     const color = document.querySelector('#color').value;
 
-    if(title.value === '') {
-      title.style.borderColor = 'red';
-      title.focus();
-      return false;
-    }
+    const eventData = { title, start, color };
 
-    if(start.value === '') {
-      start.style.borderColor = 'red';
-      start.focus();
-      return false;
-    }
-
-    this.submit();
+    fetch('http://localhost:3000/events', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(eventData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      fecharModal();
+    })
+    .catch(error => console.error('Error:', error));
   });
 
   formAddNote.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const title = document.querySelector('#note-title');
-    const content = document.querySelector('#note-content');
+    const title = document.querySelector('#note-title').value;
+    const content = document.querySelector('#note-content').value;
 
-    if(title.value === '') {
-      title.style.borderColor = 'red';
-      title.focus();
-      return false;
-    }
+    const noteData = { title, content };
 
-    if(content.value === '') {
-      content.style.borderColor = 'red';
-      content.focus();
-      return false;
-    }
-
-    const data = { 
-      title: title.value, 
-      content: content.value 
-    };
-
-    const urlEncodedData = Object.keys(data)
-      .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
-      .join('&');
-
-    const ajax = new XMLHttpRequest();
-    ajax.open('POST', 'http://localhost:3000/api/annotations', true);
-    ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    ajax.send(urlEncodedData);
-
-    ajax.onreadystatechange = function() {
-      if(ajax.readyState === 4 && ajax.status === 200) {
-        fecharModalAnotacao();
-      }
-    }
+    fetch('http://localhost:3000/annotations', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(noteData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      fecharModalAnotacao();
+    })
+    .catch(error => console.error('Error:', error));
   });
 
   // Modal Functions
@@ -210,8 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('.btn-delete').classList.remove('hidden');
 
     if (confirm("Deseja realmente deletar o evento?")) {
-      fetch(`http://localhost:3000/events/${info.event.id}`, {
-        method: 'DELETE'
+      fetch(`http://localhost:3000/events/${info.event.id}`, { // esse http://localhost:3000/ acho que vai sair depois
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       .then(() => {
         info.event.remove();
@@ -238,9 +232,10 @@ document.addEventListener("DOMContentLoaded", function () {
       allDay: info.event.allDay
     };
 
-    fetch(`http://localhost:3000/events/${info.event.id}`, {
+    fetch(`http://localhost:3000/events/${info.event.id}`, { // esse http://localhost:3000/ acho que vai sair depois
       method: 'PUT',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(eventData)

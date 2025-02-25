@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const { PrismaClient } = require("@prisma/client");
 const authMiddleware = require('./middleware/auth');
 const authController = require('./controllers/authController'); // Importa o controller de autenticação
@@ -8,8 +9,15 @@ const eventController = require('./controllers/eventController'); // Importa o c
 
 const prisma = new PrismaClient();
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: 'http://localhost:5500', // Substitua pela URL do seu front-end
+  credentials: true
+}));
 app.use(express.json());
+
+// Servir arquivos estáticos
+app.use(express.static(path.join(__dirname, '../front-ent')));
 
 // Usa o controller para rotas de autenticação
 app.use(authController);
@@ -19,6 +27,11 @@ app.use(annotationController);
 
 // Usa o controller para rotas de eventos
 app.use(eventController);
+
+// Rota para servir o arquivo index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../front-ent', 'index.html'));
+});
 
 // Iniciar servidor
 app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
