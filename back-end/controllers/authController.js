@@ -13,7 +13,7 @@ const JWT_SECRET = "seu_segredo";
 router.post("/register", [
     body("name").notEmpty(),
     body("email").isEmail(),
-    body("password").isLength({ min: 6 }),
+    body("password").isLength({ min: 8 }),
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -25,7 +25,7 @@ router.post("/register", [
         const user = await prisma.user.create({
             data: { name, email, password: hashedPassword },
         });
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "2d" });
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
         res.cookie('token', token, { httpOnly: true });
         res.json({ message: "Usuário registrado com sucesso!" });
     } catch (error) {
