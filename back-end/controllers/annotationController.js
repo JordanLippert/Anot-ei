@@ -29,11 +29,15 @@ router.put("/annotations/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
   try {
-    const annotation = await prisma.annotation.update({
+    const annotation = await prisma.annotation.findUnique({ where: { id: parseInt(id) } });
+    if (annotation.userId !== req.user.id) {
+      return res.status(403).json({ error: "Acesso negado" });
+    }
+    const updatedAnnotation = await prisma.annotation.update({
       where: { id: parseInt(id) },
       data: { title, content },
     });
-    res.json(annotation);
+    res.json(updatedAnnotation);
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar anotação" });
   }
@@ -43,6 +47,10 @@ router.put("/annotations/:id", authMiddleware, async (req, res) => {
 router.delete("/annotations/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   try {
+    const annotation = await prisma.annotation.findUnique({ where: { id: parseInt(id) } });
+    if (annotation.userId !== req.user.id) {
+      return res.status(403).json({ error: "Acesso negado" });
+    }
     await prisma.annotation.delete({ where: { id: parseInt(id) } });
     res.json({ message: "Anotação deletada" });
   } catch (error) {

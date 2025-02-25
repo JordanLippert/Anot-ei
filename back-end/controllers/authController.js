@@ -25,7 +25,7 @@ router.post("/register", [
         const user = await prisma.user.create({
             data: { name, email, password: hashedPassword },
         });
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "2d" });
         res.cookie('token', token, { httpOnly: true });
         res.json({ message: "Usuário registrado com sucesso!" });
     } catch (error) {
@@ -48,7 +48,7 @@ router.post("/login", async (req, res) => {
     res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
 });
 
-//recuperação de Senha
+// Recuperação de Senha
 router.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
     const user = await prisma.user.findUnique({ where: { email } });
@@ -77,7 +77,7 @@ router.post("/forgot-password", async (req, res) => {
     res.json({ message: "Código de recuperação enviado para o e-mail." });
 });
 
-//resetar Senha
+// Resetar Senha
 router.post("/reset-password", async (req, res) => {
     const { email, token, newPassword } = req.body;
 
@@ -94,7 +94,7 @@ router.post("/reset-password", async (req, res) => {
 });
 
 // Atualizar perfil do usuário
-router.put("/update-profile", async (req, res) => {
+router.put("/update-profile", authMiddleware, async (req, res) => {
     const { name, email, password } = req.body;
     const userId = req.user.id; // Supondo que você tenha middleware de autenticação que adiciona o ID do usuário ao req
 
@@ -116,7 +116,7 @@ router.put("/update-profile", async (req, res) => {
 });
 
 // Deletar conta do usuário
-router.delete("/delete-account", async (req, res) => {
+router.delete("/delete-account", authMiddleware, async (req, res) => {
     const userId = req.user.id; // Supondo que você tenha middleware de autenticação que adiciona o ID do usuário ao req
 
     try {
