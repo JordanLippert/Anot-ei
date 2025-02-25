@@ -1,5 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-  
+  const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
 
   // DOM Elements
   const calendarEl = document.getElementById("calendar");
