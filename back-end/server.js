@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5500', // Substitua pela URL do seu front-end
+  origin: ["http://localhost:5500", "http://127.0.0.1:5500"], // Permite ambas as origens
   credentials: true
 }));
 app.use(express.json());
@@ -20,13 +20,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../front-ent')));
 
 // Usa o controller para rotas de autenticação
-app.use(authController);
+app.use('/', authController);
 
 // Usa o controller para rotas de anotações
-app.use(annotationController);
+app.use('/', annotationController);
 
 // Usa o controller para rotas de eventos
-app.use(eventController);
+app.use('/', eventController);
 
 // Rota para servir o arquivo index.html
 app.get('*', (req, res) => {
