@@ -1,9 +1,51 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
   if (!token) {
     window.location.href = 'login.html';
     return;
   }
+
+  // Função para buscar eventos do back-end
+  async function fetchEvents() {
+    const response = await fetch('http://localhost:3000/events', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const events = await response.json();
+    return events.map(event => ({
+      id: event.id,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      allDay: event.allDay,
+      backgroundColor: event.color,
+      borderColor: event.color
+    }));
+  }
+
+  // Função para buscar anotações do back-end
+  async function fetchAnnotations() {
+    const response = await fetch('http://localhost:3000/annotations', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const annotations = await response.json();
+    return annotations.map(annotation => ({
+      id: annotation.id,
+      title: annotation.title,
+      content: annotation.content
+    }));
+  }
+
+  // Buscar eventos e inicializar o calendário
+  const events = await fetchEvents();
+  const annotations = await fetchAnnotations();
 
   // DOM Elements
   const calendarEl = document.getElementById("calendar");
@@ -47,12 +89,10 @@ document.addEventListener("DOMContentLoaded", function () {
     dateClick: abrirModal,
     eventClick: abrirModalEditar,
     eventDrop: moverEvento,
-    events: "http://localhost:3000/events",
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
+    events: events,
+    annotations: annotations
   });
-  
+
   calendar.render();
 
   // Event Listeners
@@ -107,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const eventData = { title, start, color };
 
-    fetch('http://localhost:3000/events', {
+    fetch('http://localhost:3000/events', { // esse http://localhost:3000/ acho que vai sair depois
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -131,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const noteData = { title, content };
 
-    fetch('http://localhost:3000/annotations', {
+    fetch('http://localhost:3000/annotations', { // esse http://localhost:3000/ acho que vai sair depois
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
