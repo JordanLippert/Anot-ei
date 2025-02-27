@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require('../middleware/auth');
 const { PrismaClient } = require("@prisma/client");
 const { body, validationResult } = require("express-validator");
 
@@ -11,12 +12,14 @@ const JWT_SECRET = "seu_segredo";
 
 // Cadastro do usuário
 router.post("/register", [
-    body("name").notEmpty(),
-    body("email").isEmail(),
-    body("password").isLength({ min: 8 }),
+    body("name").notEmpty().withMessage("Nome é obrigatório"),
+    body("email").isEmail().withMessage("Email inválido"),
+    body("password").isLength({ min: 8 }).withMessage("A senha deve ter pelo menos 8 caracteres"),
 ], async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { name, email, password } = req.body;
 
@@ -27,7 +30,7 @@ router.post("/register", [
         });
         const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
         res.cookie('token', token, { httpOnly: true });
-        res.json({ message: "Usuário registrado com sucesso!" });
+        res.json({ token, user: { id: user.id, name: user.name, email: user.email }, message: "Usuário registrado com sucesso!" });
     } catch (error) {
         res.status(500).json({ error: "Erro ao cadastrar usuário" });
     }
