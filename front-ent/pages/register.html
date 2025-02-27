@@ -72,6 +72,8 @@
         <input type="submit" value="Registrar">
     </form>
 
+    <div id="error-messages" class="alert alert-danger" style="display: none;"></div>
+
     <script>
     document.getElementById('register-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -91,12 +93,15 @@
             body: JSON.stringify({ name, email, password })
         });
 
+        const errorMessagesDiv = document.getElementById('error-messages');
         if (response.ok) {
             const data = await response.json();
             document.cookie = `token=${data.token}; path=/`;
             window.location.href = '/home.html';
         } else {
-            alert('Erro ao registrar.');
+            const errorData = await response.json();
+            errorMessagesDiv.style.display = 'block';
+            errorMessagesDiv.innerHTML = errorData.errors.map(error => `<p>${error.msg}</p>`).join('');
         }
     });
     </script>
