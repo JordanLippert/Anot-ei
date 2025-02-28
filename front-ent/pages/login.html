@@ -58,6 +58,8 @@
         <input type="submit" value="Entrar">
     </form>
 
+    <div id="error-messages" class="alert alert-danger" style="display: none;"></div>
+
     <script>
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -70,12 +72,15 @@
             body: JSON.stringify({ email, password })
         });
 
+        const errorMessagesDiv = document.getElementById('error-messages');
         if (response.ok) {
             const data = await response.json();
             document.cookie = `token=${data.token}; path=/`;
             window.location.href = '/home.html';
         } else {
-            alert('Erro ao fazer login.');
+            const errorData = await response.json();
+            errorMessagesDiv.style.display = 'block';
+            errorMessagesDiv.innerHTML = `<p>${errorData.error}</p>`;
         }
     });
     </script>
