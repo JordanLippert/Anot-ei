@@ -40,15 +40,26 @@ router.post("/register", [
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(401).json({ error: "Usuário não encontrado" });
+    try {
+        // Verificar se o usuário existe
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return res.status(401).json({ error: "Usuário não encontrado" });
+        }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: "Senha incorreta" });
+        // Verificar se a senha está correta
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Senha incorreta" });
+        }
 
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
-    res.cookie('token', token, { httpOnly: true });
-    res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+        // Gerar token JWT
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1d" });
+        res.cookie('token', token, { httpOnly: true });
+        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao fazer login" });
+    }
 });
 
 // Recuperação de Senha
