@@ -12,7 +12,7 @@ router.post("/annotations", authMiddleware, async (req, res) => {
     const annotation = await prisma.annotation.create({
       data: { title, content, userId: req.user.id },
     });
-    res.json(annotation);
+    res.status(201).json(annotation);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar anotação" });
   }
@@ -20,8 +20,14 @@ router.post("/annotations", authMiddleware, async (req, res) => {
 
 // Listar anotações
 router.get("/annotations", authMiddleware, async (req, res) => {
-  const annotations = await prisma.annotation.findMany({ where: { userId: req.user.id } });
-  res.json(annotations);
+  try {
+    const annotations = await prisma.annotation.findMany({
+      where: { userId: req.user.id },
+    });
+    res.json(annotations);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao listar anotações" });
+  }
 });
 
 // Atualizar anotação
@@ -56,6 +62,22 @@ router.delete("/annotations/:id", authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar anotação" });
   }
+});
+
+// Adicionar anotações de exemplo
+async function addExampleAnnotations() {
+  await prisma.annotation.createMany({
+    data: [
+      { title: "Anotação 1", content: "Conteúdo da anotação 1", userId: 1 },
+      { title: "Anotação 2", content: "Conteúdo da anotação 2", userId: 1 },
+      { title: "Anotação 3", content: "Conteúdo da anotação 3", userId: 1 },
+    ],
+  });
+}
+
+addExampleAnnotations().catch((e) => {
+  console.error(e);
+  prisma.$disconnect();
 });
 
 module.exports = router;

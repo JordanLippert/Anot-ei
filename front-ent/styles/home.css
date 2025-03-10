@@ -310,3 +310,36 @@ img {
     background-color: #f59e0b !important;
     color: #fff !important;
 }
+
+.conteiner-annotation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+}
+
+.annotation {
+    background-color: #ffeb3b;
+    color: #333;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.annotation h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.annotation p {
+    margin: 10px 0 0;
+    font-size: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,51 +1,52 @@
 document.addEventListener("DOMContentLoaded", async function () {
-  const token = document.cookie.split('; ').find(row => row.startsWith('token=')).split('=')[1];
-  if (!token) {
-    window.location.href = 'login.html';
-    return;
-  }
+  //const tokenCookie = document.cookie.split('; ').find(row => row.startsWith('token='));
+  //if (!tokenCookie) {
+  //  window.location.href = 'login.html';
+  //  return;
+  //}
+  //const token = tokenCookie.split('=')[1];
 
   // Função para buscar eventos do back-end
-  async function fetchEvents() {
-    const response = await fetch('http://localhost:3000/events', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    const events = await response.json();
-    return events.map(event => ({
-      id: event.id,
-      title: event.title,
-      start: event.start,
-      end: event.end,
-      allDay: event.allDay,
-      backgroundColor: event.color,
-      borderColor: event.color
-    }));
-  }
+  //async function fetchEvents() {
+    //const response = await fetch('http://localhost:3000/events', {
+      //method: 'GET',
+      //headers: {
+        //'Authorization': `Bearer ${token}`,
+        //'Content-Type': 'application/json'
+      //}
+    //});
+    //const events = await response.json();
+    //return events.map(event => ({
+      //id: event.id,
+      //title: event.title,
+      //start: event.start,
+      //end: event.end,
+      //allDay: event.allDay,
+      //backgroundColor: event.color,
+      //borderColor: event.color
+    //}));
+  //}
 
   // Função para buscar anotações do back-end
-  async function fetchAnnotations() {
-    const response = await fetch('http://localhost:3000/annotations', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    const annotations = await response.json();
-    return annotations.map(annotation => ({
-      id: annotation.id,
-      title: annotation.title,
-      content: annotation.content
-    }));
-  }
+  //async function fetchAnnotations() {
+    //const response = await fetch('http://localhost:3000/annotations', {
+      //method: 'GET',
+      //headers: {
+        //'Authorization': `Bearer ${token}`,
+        //'Content-Type': 'application/json'
+      //}
+    //});
+    //const annotations = await response.json();
+    //return annotations.map(annotation => ({
+      //id: annotation.id,
+      //title: annotation.title,
+      //content: annotation.content
+    //}));
+  //}
 
   // Buscar eventos e inicializar o calendário
-  const events = await fetchEvents();
-  const annotations = await fetchAnnotations();
+  //const events = await fetchEvents();
+  //const annotations = await fetchAnnotations();
 
   // DOM Elements
   const calendarEl = document.getElementById("calendar");
@@ -89,8 +90,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     dateClick: abrirModal,
     eventClick: abrirModalEditar,
     eventDrop: moverEvento,
-    events: events,
-    annotations: annotations
+    //events: events,
+    //annotations: annotations
   });
 
   calendar.render();
