@@ -311,10 +311,14 @@ img {
     color: #fff !important;
 }
 
+/* 
+   Alterações para utilizar o Bootstrap na área de anotações:
+   - Removemos o display:flex e gap, pois usaremos o grid do Bootstrap.
+   - Removemos width e height fixos para responsividade.
+*/
+
 .conteiner-annotation {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    /* Agora usaremos o container do Bootstrap (definido na tag HTML) e mantemos apenas o padding */
     padding: 20px;
 }
 
@@ -324,8 +328,6 @@ img {
     padding: 15px;
     border-radius: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    width: 200px;
-    height: 150px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -342,4 +344,19 @@ img {
     font-size: 1em;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.annotation .btn-delete-annotation {
+    background-color: #ff6347;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.annotation .btn-delete-annotation:hover {
+    background-color: #dd7a69;
 }
